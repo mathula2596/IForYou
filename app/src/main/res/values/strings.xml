@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">IForYou</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="logoImage">Logo</string>
+    <string name="loginHeading">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="password_icon_description">Password Icon</string>
+    <string name="username_icon_description">Username Icon</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="uniLogoImage">Powered By</string>
+    <string name="poweredBy">Powered By</string>
 </resources>
