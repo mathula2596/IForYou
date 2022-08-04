@@ -13,4 +13,17 @@
     <string name="register">Register</string>
     <string name="uniLogoImage">Powered By</string>
     <string name="poweredBy">Powered By</string>
+    <string name="registerHeading">Register</string>
+    <string name="student">Student</string>
+    <string name="lecturer">Lecturer</string>
+    <string name="title">Title</string>
+    <string name="firstname">Firstname</string>
+    <string name="middleName">Middle Name</string>
+    <string name="lastname">Lastname</string>
+    <string name="universityId">University ID</string>
+    <string name="courseId">Course</string>
+    <string name="email">Email</string>
+    <string name="degreeLevel">Degree Level</string>
+    <string name="batchNumber">Batch Number</string>
+    <string name="confirmPassword">Confirm Password</string>
 </resources>

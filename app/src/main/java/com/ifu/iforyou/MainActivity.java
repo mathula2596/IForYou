@@ -14,9 +14,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-        LoginFragment loginFragment = new LoginFragment();
+        RegisterFragment registerFragment = new RegisterFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.loginFrameLayout,loginFragment);
+        fragmentTransaction.replace(R.id.loginFrameLayout,registerFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
