@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".RegisterFragment"
-    android:background="@color/background"
-    >
+    android:background="@color/background">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_margin="20dp">
 
@@ -55,7 +51,7 @@
                 android:text="@string/student"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 app:buttonTint="@color/logoColor"
                />
 
@@ -63,7 +59,7 @@
                 android:id="@+id/rdbLecturer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:text="@string/lecturer"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -89,45 +85,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconContentDescription="@string/title"
-            app:startIconDrawable="@drawable/ic_baseline_title_24">
 
-            <AutoCompleteTextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:hint="@string/title"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/firstname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/firstname"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:startIconContentDescription="@string/username_icon_description"
-            app:startIconDrawable="@drawable/ic_baseline_person_24"
-            >
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/middleName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/middleName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:startIconContentDescription="@string/username_icon_description"
             app:startIconDrawable="@drawable/ic_baseline_person_24"
@@ -175,22 +139,7 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/email"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:startIconContentDescription="@string/username_icon_description"
-            app:startIconDrawable="@drawable/ic_baseline_email_24">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -222,6 +171,23 @@
                 android:inputType="none"
                 android:hint="@string/batchNumber"
                 />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:startIconContentDescription="@string/username_icon_description"
+            app:startIconDrawable="@drawable/ic_baseline_email_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -281,7 +247,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/login"
                 android:backgroundTint="@color/gray"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 style="@style/Widget.MaterialComponents.Button.Icon"
                 />
 
@@ -317,5 +283,4 @@
                 android:src="@drawable/uni_logo" />
         </RelativeLayout>
     </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+</ScrollView>
