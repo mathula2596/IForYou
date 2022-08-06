@@ -134,9 +134,9 @@
                 android:id="@+id/courseId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
                 android:hint="@string/courseId"
-                />
+                android:inputType="none"
+                tools:ignore="TextContrastCheck,TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
