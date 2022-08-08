@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/drawable/ic_baseline_remove_red_eye_24.xml" value="0.1535" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_admin_dashboard.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_lecturer_dashboard.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_student_dashboard.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_forgot_password.xml" value="0.18" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_register.xml" value="0.33" />

@@ -1,24 +1,31 @@
 package com.ifu.iforyou;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.security.GeneralSecurityException;
 
-public class DatabaseAccess {
+public class DatabaseAccess extends AppCompatActivity {
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase db;
     private  static DatabaseAccess instance;
-    Cursor c = null;
+    private Cursor c = null;
+    private String status = "Active";
 
     private DatabaseAccess(Context context)
     {
@@ -76,17 +83,58 @@ public class DatabaseAccess {
         }
     }
 
-    /*public void decrypt(View view) throws GeneralSecurityException {
-        String encrpyted = AESCrypt.decrypt(et_key.getText().toString(), et_value.getText().toString());
-        ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-        ClipData clipData = ClipData.newPlainText("lable", encrpyted);
-        clipboardManager.setPrimaryClip(clipData);
-        Toast.makeText(this, "Your Message Was Copied to clip board", Toast.LENGTH_SHORT).show();
-        et_value.setText("");
-        et_key.setText("");
-        message.setText(String.format("You Decrypted key is (Copied To Clipboard) : %s", encrpyted));
+    public String login(String username, String password) throws GeneralSecurityException {
+        c = null;
+        String encryptedPassword = AESCrypt.encrypt(username,password);
+        c = db.rawQuery("select * from users where universityId = ? and password = ? and status =" +
+                        " ?", new String[]{username,encryptedPassword, status});
+        if(c.getCount()>0)
+        {
+            while (c.moveToNext()){
+                return c.getString(6);
+            }
+        }
+        else
+        {
+            return "false";
+        }
 
+        return "false";
+    }
 
-    }*/
+    public boolean forgotPasswordEmailCheck(String emailId) throws GeneralSecurityException {
+        c = null;
+        c = db.rawQuery("select * from users where email = ? and status =?", new String[]{emailId,
+                status});
+        if(c.getCount()>0)
+        {
+            return  true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public boolean forgotPasswordUpdatePassword(String emailId, String password) throws GeneralSecurityException {
+        c = null;
+        c = db.rawQuery("select * from users where email = ? and status =?", new String[]{emailId,
+                status});
+        if(c.getCount()>0)
+        {
+            String universityId = null;
+            while (c.moveToNext()){
+                universityId = c.getString(1);
+            }
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("password",AESCrypt.encrypt(universityId,password));
+            db.update("users",contentValues," email =?",new String[]{emailId});
+            return  true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 }
