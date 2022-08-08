@@ -91,7 +91,7 @@ public class ForgotPasswordFragment extends Fragment {
                             boolean result2 =
                                     databaseAccess.forgotPasswordUpdatePassword(email.getEditText().getText().toString(),randomPassword);
                             if(result2){
-                                message.setText(randomPassword);
+                                message.setText("New Password - " + randomPassword);
                                 StrictMode.ThreadPolicy policy =
                                         new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                 StrictMode.setThreadPolicy(policy);
