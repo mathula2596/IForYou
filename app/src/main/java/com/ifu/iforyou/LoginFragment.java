@@ -1,6 +1,8 @@
 package com.ifu.iforyou;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -31,9 +33,26 @@ public class LoginFragment extends Fragment {
     private TextInputLayout username, password;
     private String userRole;
 
+    private SharedPreferences sharedPreferences;
+    private static final String SHARED_PRE_NAME = "myPreference";
+    private static final String KEY_NAME = "username";
+    private static final String KEY_ROLE = "userType";
+
+    String loginName, loginRole = null;
+
+    private DatabaseAccess databaseAccess;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        databaseAccess = DatabaseAccess.getInstance(getActivity());
+        databaseAccess.open();
+        try {
+            databaseAccess.adminAccountCreation();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        databaseAccess.close();
 
         view = inflater.inflate(R.layout.fragment_login, container, false);
 
@@ -50,6 +69,16 @@ public class LoginFragment extends Fragment {
 
         });
 
+
+        sharedPreferences = getActivity().getSharedPreferences(SHARED_PRE_NAME, Context.MODE_PRIVATE);
+        loginName = sharedPreferences.getString(KEY_NAME,null);
+        loginRole = sharedPreferences.getString(KEY_ROLE,null);
+
+        if(loginName != null || loginRole != null)
+        {
+            selectDashboard(loginRole);
+        }
+
         btnLogin = view.findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(view1 -> {
             username = view.findViewById(R.id.username);
@@ -57,36 +86,22 @@ public class LoginFragment extends Fragment {
             registerFragment = new RegisterFragment();
             if(registerFragment.checkFieldEmpty(username) && registerFragment.checkFieldEmpty(password))
             {
-                DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity());
+                //DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity());
                 databaseAccess.open();
                 String result = "false";
                 try {
                     result = databaseAccess.login(username.getEditText().getText().toString(),
                             password.getEditText().getText().toString());
-                    //Log.d("TAG", "onCreateView: " + result);
-                    if(result.equals("Student"))
-                    {
-                        startActivity(new Intent(getActivity(),StudentDashboard.class));
-                        getActivity().finish();
-                    }
-                    else if(result.equals("Lecturer"))
-                    {
-                        startActivity(new Intent(getActivity(),LecturerDashboard.class));
-                        getActivity().finish();
-                    }
-                    else if(result.equals("Admin"))
-                    {
-                        startActivity(new Intent(getActivity(),AdminDashboard.class));
-                        getActivity().finish();
-                    }
-                    else{
-                        Toast.makeText(getActivity(),"Username or Password is wrong!",
-                                Toast.LENGTH_SHORT).show();
-                    }
+
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putString(KEY_NAME,username.getEditText().getText().toString());
+                    editor.putString(KEY_ROLE,result);
+                    editor.apply();
+
+                    selectDashboard(result);
                 } catch (GeneralSecurityException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(getActivity(),"result - "+result,Toast.LENGTH_SHORT).show();
                 databaseAccess.close();
             }
         });
@@ -99,5 +114,28 @@ public class LoginFragment extends Fragment {
         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.homeFrameLayout,fragment);
         fragmentTransaction.commit();
+    }
+
+    public void selectDashboard(String result)
+    {
+        if(result.equals("Student"))
+        {
+            startActivity(new Intent(getActivity(),StudentDashboard.class));
+            getActivity().finish();
+        }
+        else if(result.equals("Lecturer"))
+        {
+            startActivity(new Intent(getActivity(),LecturerDashboard.class));
+            getActivity().finish();
+        }
+        else if(result.equals("Admin"))
+        {
+            startActivity(new Intent(getActivity(),AdminDashboard.class));
+            getActivity().finish();
+        }
+        else{
+            Toast.makeText(getActivity(),"Username or Password is wrong!",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LecturerDashboard">
-
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="150dp"
+        tools:layout_editor_absoluteY="385dp" />
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"

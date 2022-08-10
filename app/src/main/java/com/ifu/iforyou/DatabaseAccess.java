@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.scottyab.aescrypt.AESCrypt;
@@ -26,12 +28,13 @@ public class DatabaseAccess extends AppCompatActivity {
     private  static DatabaseAccess instance;
     private Cursor c = null;
     private String status = "Active";
+    String encryptedPassword = null;
 
     private DatabaseAccess(Context context)
     {
         this.openHelper = new DatabaseOpenHelper(context);
-
     }
+
     public static DatabaseAccess getInstance(Context context)
     {
         if(instance==null)
@@ -55,11 +58,35 @@ public class DatabaseAccess extends AppCompatActivity {
         }
     }
 
+    public void adminAccountCreation() throws GeneralSecurityException {
+
+        encryptedPassword = AESCrypt.encrypt("N0000000","123456");
+        c = db.rawQuery("select * from users where userRole = ? and status =" +
+                " ?", new String[]{"Admin", status});
+
+       if(c.getCount()<=0)
+        {
+            ContentValues contentValues = new ContentValues();
+
+            contentValues.put("universityId","N0000000");
+            contentValues.put("firstName","Admin");
+            contentValues.put("lastName","Admin");
+            contentValues.put("email","admin@gmail.com");
+            contentValues.put("password",encryptedPassword);
+            contentValues.put("userRole","Admin");
+            contentValues.put("status",status);
+
+            long result = db.insert("users", null,contentValues);
+
+        }
+
+    }
+
     public boolean register(String universityId, String firstname, String lastname, String email,
                          String password, String userRole, String courseId, String degreeLevel,
                          String batchNo, String status) throws GeneralSecurityException {
 
-        String encryptedPassword = AESCrypt.encrypt(universityId,password);
+        encryptedPassword = AESCrypt.encrypt(universityId,password);
         ContentValues contentValues = new ContentValues();
         contentValues.put("universityId",universityId);
         contentValues.put("firstName",firstname);
@@ -85,7 +112,7 @@ public class DatabaseAccess extends AppCompatActivity {
 
     public String login(String username, String password) throws GeneralSecurityException {
         c = null;
-        String encryptedPassword = AESCrypt.encrypt(username,password);
+        encryptedPassword = AESCrypt.encrypt(username,password);
         c = db.rawQuery("select * from users where universityId = ? and password = ? and status =" +
                         " ?", new String[]{username,encryptedPassword, status});
         if(c.getCount()>0)
