@@ -1,21 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.IForYou" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+    <style name="Theme.IForYou" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/logoColor</item>
-        <item name="colorPrimaryVariant">@color/logoColor_500</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/logoColor_700</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/logoColor</item>
+        <item name="colorSecondary">@color/logoColor_500</item>
         <item name="colorSecondaryVariant">@color/logoColor_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
-    </style>
-    <style name="line">
-        <item name="android:background">@color/gray</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_height">1dp</item>
     </style>
 </resources>

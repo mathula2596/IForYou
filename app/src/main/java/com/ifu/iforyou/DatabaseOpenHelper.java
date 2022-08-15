@@ -10,5 +10,9 @@ public class DatabaseOpenHelper extends SQLiteAssetHelper {
 
     public DatabaseOpenHelper(Context context){
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
+//        super(context, DATABASE_NAME,
+//                context.getExternalFilesDir("../../com.ifu.iforyoustudent").getAbsolutePath(),
+//         null, DATABASE_VERSION);
+
     }
 }

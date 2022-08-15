@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.StrictMode;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +20,18 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.security.GeneralSecurityException;
+import java.util.Properties;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 
 public class RegisterFragment extends Fragment {
@@ -42,6 +53,8 @@ public class RegisterFragment extends Fragment {
     private String status = "Active";
     private String userRole = "Student";
     private boolean validPassword, validUniversityID,validDropdown, validEmail, validField = false;
+    final String username = "mathula2011@gmail.com";
+    final String emailPassword = "jmwwdizaqbgabsse";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -170,6 +183,36 @@ public class RegisterFragment extends Fragment {
                     if(result)
                     {
                         Toast.makeText(getActivity(),"Registration Success!",Toast.LENGTH_SHORT).show();
+
+                        Properties props = new Properties();
+                        props.put("mail.smtp.auth","true");
+                        props.put("mail.smtp.starttls.enable","true");
+                        props.put("mail.smtp.host","smtp.gmail.com");
+                        props.put("mail.smtp.port","587");
+
+                        Session session = Session.getInstance(props, new javax.mail.Authenticator(){
+                            @Override
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication(username, emailPassword);
+                            }
+                        });
+                        try{
+                            Message message = new MimeMessage(session);
+                            message.setFrom(new InternetAddress(username));
+                            message.setRecipients(Message.RecipientType.TO,
+                                    InternetAddress.parse(email.getEditText().getText().toString()));
+                            message.setSubject("Account Details");
+                            message.setText("Username - " + universityId.getEditText().getText() + " \n" + "Password - " + password.getEditText().getText().toString());
+                            StrictMode.ThreadPolicy policy =
+                                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                            StrictMode.setThreadPolicy(policy);
+                            Transport.send(message);
+
+                        }
+                        catch (MessagingException e)
+                        {
+                            throw new RuntimeException(e);
+                        }
                         loginFragment = new LoginFragment();
                         replaceFragment(loginFragment);
 
@@ -263,7 +306,7 @@ public class RegisterFragment extends Fragment {
     public boolean emailValidator(TextInputLayout textField){
         validEmail = false;
         String email = textField.getEditText().getText().toString();
-        if(Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        if(!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
             textField.setError(null);
             validEmail = true;

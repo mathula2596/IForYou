@@ -118,12 +118,7 @@ public class LoginFragment extends Fragment {
 
     public void selectDashboard(String result)
     {
-        if(result.equals("Student"))
-        {
-            startActivity(new Intent(getActivity(),StudentDashboard.class));
-            getActivity().finish();
-        }
-        else if(result.equals("Lecturer"))
+        if(result.equals("Lecturer"))
         {
             startActivity(new Intent(getActivity(),LecturerDashboard.class));
             getActivity().finish();
@@ -134,7 +129,8 @@ public class LoginFragment extends Fragment {
             getActivity().finish();
         }
         else{
-            Toast.makeText(getActivity(),"Username or Password is wrong!",
+            Toast.makeText(getActivity(),"Username or Password is wrong or you don't allowed to " +
+                            "login!",
                     Toast.LENGTH_SHORT).show();
         }
     }

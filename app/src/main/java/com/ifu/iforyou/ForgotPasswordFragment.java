@@ -36,10 +36,7 @@ public class ForgotPasswordFragment extends Fragment {
     private LoginFragment loginFragment;
     private RegisterFragment registerFragment;
     private TextInputLayout email;
-    final String username = "mathula2011@gmail.com";
-    final String password = "jmwwdizaqbgabsse";
-    private String randomPassword;
-    private Random random;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,63 +58,25 @@ public class ForgotPasswordFragment extends Fragment {
                 DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity());
                 databaseAccess.open();
                 boolean result = false;
-                try {
-                    result =
-                            databaseAccess.forgotPasswordEmailCheck(email.getEditText().getText().toString());
+                result =
+                        databaseAccess.forgotPasswordEmailCheck(email.getEditText().getText().toString());
 
-                    if(result)
+                if(result)
+                {
+                    if(databaseAccess.sendPassword(email.getEditText().getText().toString()))
                     {
-                        Properties props = new Properties();
-                        props.put("mail.smtp.auth","true");
-                        props.put("mail.smtp.starttls.enable","true");
-                        props.put("mail.smtp.host","smtp.gmail.com");
-                        props.put("mail.smtp.port","587");
-
-                        Session session = Session.getInstance(props, new javax.mail.Authenticator(){
-                            @Override
-                            protected PasswordAuthentication getPasswordAuthentication() {
-                                return new PasswordAuthentication(username, password);
-                            }
-                        });
-                        try{
-                            Message message = new MimeMessage(session);
-                            message.setFrom(new InternetAddress(username));
-                            message.setRecipients(Message.RecipientType.TO,
-                                    InternetAddress.parse(email.getEditText().getText().toString()));
-                            message.setSubject("Reset Password");
-                            random = new Random();
-                            randomPassword = String.format("%04d", random.nextInt(10000));
-                            boolean result2 =
-                                    databaseAccess.forgotPasswordUpdatePassword(email.getEditText().getText().toString(),randomPassword);
-                            if(result2){
-                                message.setText("New Password - " + randomPassword);
-                                StrictMode.ThreadPolicy policy =
-                                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
-                                Transport.send(message);
-                                Toast.makeText(getActivity(), "Please check your mail for the temporary password",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                Toast.makeText(getActivity(), "Failed to reset! Try again",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-
-
-                        }
-                        catch (MessagingException e)
-                        {
-                            throw new RuntimeException(e);
-                        }
+                         Toast.makeText(getActivity(), "Please check your mail for the temporary password",
+                               Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        Toast.makeText(getActivity(), "This email is not registered",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Failed to reset! Try again", Toast.LENGTH_SHORT).show();
                     }
-                } catch (GeneralSecurityException e) {
-                    e.printStackTrace();
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "This email is not registered",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 databaseAccess.close();

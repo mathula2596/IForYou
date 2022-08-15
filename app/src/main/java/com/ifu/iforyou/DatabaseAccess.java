@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,14 +22,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.security.GeneralSecurityException;
+import java.util.Properties;
+import java.util.Random;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class DatabaseAccess extends AppCompatActivity {
-    private SQLiteOpenHelper openHelper;
-    private SQLiteDatabase db;
+    public SQLiteOpenHelper openHelper;
+    public SQLiteDatabase db;
     private  static DatabaseAccess instance;
     private Cursor c = null;
     private String status = "Active";
-    String encryptedPassword = null;
+    String encryptedPassword,randomPassword = null;
+    final String username = "mathula2011@gmail.com";
+    final String password = "jmwwdizaqbgabsse";
+    private Random random;
 
     private DatabaseAccess(Context context)
     {
@@ -128,8 +142,22 @@ public class DatabaseAccess extends AppCompatActivity {
 
         return "false";
     }
+    public Cursor studentLogin(String username, String password) throws GeneralSecurityException {
+        c = null;
+        String userRole = "Student";
+        encryptedPassword = AESCrypt.encrypt(username,password);
+        c = db.rawQuery("select * from users where universityId = ? and password = ? and status =" +
+                " ? and userRole=?", new String[]{username,encryptedPassword, status,userRole});
+        if(c.getCount()>0)
+        {
+            while (c.moveToNext()){
+                return c;
+            }
+        }
+        return c;
+    }
 
-    public boolean forgotPasswordEmailCheck(String emailId) throws GeneralSecurityException {
+    public boolean forgotPasswordEmailCheck(String emailId){
         c = null;
         c = db.rawQuery("select * from users where email = ? and status =?", new String[]{emailId,
                 status});
@@ -143,6 +171,14 @@ public class DatabaseAccess extends AppCompatActivity {
         }
     }
 
+    public Cursor findByEmail(String emailId){
+        c = null;
+        c = db.rawQuery("select * from users where email = ? and status =?", new String[]{emailId,
+                status});
+       return c;
+    }
+
+
     public boolean forgotPasswordUpdatePassword(String emailId, String password) throws GeneralSecurityException {
         c = null;
         c = db.rawQuery("select * from users where email = ? and status =?", new String[]{emailId,
@@ -151,8 +187,9 @@ public class DatabaseAccess extends AppCompatActivity {
         {
             String universityId = null;
             while (c.moveToNext()){
-                universityId = c.getString(1);
+                universityId = c.getString(c.getColumnIndex("universityId"));
             }
+            Log.d("TAG", "forgotPasswordUpdatePassword: "+password);
             ContentValues contentValues = new ContentValues();
             contentValues.put("password",AESCrypt.encrypt(universityId,password));
             db.update("users",contentValues," email =?",new String[]{emailId});
@@ -163,5 +200,51 @@ public class DatabaseAccess extends AppCompatActivity {
             return false;
         }
     }
+
+    public boolean sendPassword(String email)
+    {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth","true");
+        props.put("mail.smtp.starttls.enable","true");
+        props.put("mail.smtp.host","smtp.gmail.com");
+        props.put("mail.smtp.port","587");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator(){
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+        try{
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));
+            message.setSubject("Reset Password");
+            random = new Random();
+            randomPassword = String.format("%04d", random.nextInt(10000));
+            boolean result2 =
+                    forgotPasswordUpdatePassword(email,randomPassword);
+            if(result2){
+                message.setText("New Password - " + randomPassword);
+                StrictMode.ThreadPolicy policy =
+                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                Transport.send(message);
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+
+
+        }
+        catch (MessagingException | GeneralSecurityException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

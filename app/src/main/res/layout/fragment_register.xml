@@ -207,7 +207,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:text="i4u@NTU2022"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -225,7 +226,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:text="i4u@NTU2022"/>
 
         </com.google.android.material.textfield.TextInputLayout>
         <LinearLayout
