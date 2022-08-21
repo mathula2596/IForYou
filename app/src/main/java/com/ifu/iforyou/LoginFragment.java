@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
 
 public class LoginFragment extends Fragment {
 
-    private Button btnRegister, btnLogin;
+    private Button btnLogin;
     private View view;
     private RegisterFragment registerFragment;
     private FragmentTransaction fragmentTransaction;
@@ -55,12 +55,6 @@ public class LoginFragment extends Fragment {
         databaseAccess.close();
 
         view = inflater.inflate(R.layout.fragment_login, container, false);
-
-        btnRegister = view.findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(view1 -> {
-            registerFragment = new RegisterFragment();
-            replaceFragment(registerFragment);
-        });
 
         txtForgotPassword = view.findViewById(R.id.txtForgotPassword);
         txtForgotPassword.setOnClickListener(view1 -> {

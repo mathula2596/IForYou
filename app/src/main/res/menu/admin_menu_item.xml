@@ -2,17 +2,104 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/settings"
-            android:icon="@drawable/ic_baseline_email_24"
-            android:title="Settings" />
-    </group>
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="Home" />
+
+    <item android:title="Courses">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_course"
+                    android:icon="@drawable/ic_baseline_add_24"
+                    android:title="Course" />
+                <item
+                    android:id="@+id/nav_view_course"
+                    android:icon="@drawable/ic_baseline_menu_book_24"
+                    android:title="View Course" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Modules">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_module"
+                    android:icon="@drawable/ic_baseline_add_24"
+                    android:title="Module" />
+                <item
+                    android:id="@+id/nav_view_module"
+                    android:icon="@drawable/ic_baseline_menu_book_24"
+                    android:title="View Module" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Timetable">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_timetable"
+                    android:icon="@drawable/ic_baseline_calendar_today_24"
+                    android:title="Timetable" />
+                <item
+                    android:id="@+id/nav_view_timetable"
+                    android:icon="@drawable/ic_baseline_calendar_month_24"
+                    android:title="View Timetable" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Assignment">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_assignment"
+                    android:icon="@drawable/ic_baseline_add_24"
+                    android:title="Assignment" />
+                <item
+                    android:id="@+id/nav_view_assignment"
+                    android:icon="@drawable/ic_baseline_laptop_24"
+                    android:title="View Assignment" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Performance">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_performance"
+                    android:icon="@drawable/ic_baseline_grade_24"
+                    android:title="Performance" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Users">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_register"
+                    android:icon="@drawable/ic_baseline_person_24"
+                    android:title="Register Users" />
+                <item
+                    android:id="@+id/nav_view_users"
+                    android:icon="@drawable/ic_baseline_person_24"
+                    android:title="View Users" />
+            </group>
+        </menu>
+    </item>
 
 
     <item android:title="Profile">
         <menu>
             <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_profile"
+                    android:icon="@drawable/ic_baseline_person_24"
+                    android:title="Profile" />
+                <item
+                    android:id="@+id/nav_change_password"
+                    android:icon="@drawable/ic_baseline_remove_red_eye_24"
+                    android:title="Change Password" />
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/ic_baseline_lock_24"

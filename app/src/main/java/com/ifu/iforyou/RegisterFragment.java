@@ -10,6 +10,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -36,7 +38,7 @@ import javax.mail.internet.MimeMessage;
 
 public class RegisterFragment extends Fragment {
 
-    private Button btnLogin, btnRegister;
+    private Button btnRegister;
     private View view;
     private FragmentTransaction fragmentTransaction;
     private LoginFragment loginFragment;
@@ -44,17 +46,17 @@ public class RegisterFragment extends Fragment {
     private TextInputLayout universityId, firstName, lastName, email, password, confirmPassword,
     courseBorder,batchNumberBorder,degreeLevelBorder;
     private AutoCompleteTextView course, degreeLevel, batchNumber;
-    private String [] courseName = {"Computing Systems", "Computer Science", "Data Science",
-            "Cyber Security", "Engineering"};
-    private String [] degree = {"Undergraduate","Masters","PhD"};
-    private String [] batch = {"DS2021Jan","DS2021Sep","Comp2021Jan","Comp2021Sep","Comp2022Jan",
-            "Comp2022Sep"};
+    private ArrayList<String> courseName ;
+    private String [] degree = {"UG","PG","PhD"};
+    private ArrayList<String> batchName;
     private ArrayAdapter<String> arrayAdapter;
     private String status = "Active";
     private String userRole = "Student";
     private boolean validPassword, validUniversityID,validDropdown, validEmail, validField = false;
     final String username = "mathula2011@gmail.com";
     final String emailPassword = "jmwwdizaqbgabsse";
+    private DatabaseAccess databaseAccess;
+    private RegisterFragment registerFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,22 +65,37 @@ public class RegisterFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_register, container, false);
 
         course = view.findViewById(R.id.course);
-        arrayAdapter = new ArrayAdapter<>(view.getContext(),R.layout.list_item,courseName);
-        course.setAdapter(arrayAdapter);
+
 
         degreeLevel = view.findViewById(R.id.degreeLevel);
         arrayAdapter = new ArrayAdapter<>(view.getContext(),R.layout.list_item,degree);
         degreeLevel.setAdapter(arrayAdapter);
 
-        batchNumber = view.findViewById(R.id.batchNumber);
-        arrayAdapter = new ArrayAdapter<>(view.getContext(),R.layout.list_item,batch);
-        batchNumber.setAdapter(arrayAdapter);
-
-        btnLogin = view.findViewById(R.id.btnLogin);
-        btnLogin.setOnClickListener(view1 -> {
-            loginFragment = new LoginFragment();
-           replaceFragment(loginFragment);
+        degreeLevel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                databaseAccess = DatabaseAccess.getInstance(getActivity());
+                databaseAccess.open();
+                courseName = databaseAccess.courseName(degreeLevel.getText().toString());
+                arrayAdapter = new ArrayAdapter<>(view.getContext(),R.layout.list_item,courseName);
+                course.setAdapter(arrayAdapter);
+                databaseAccess.close();
+            }
         });
+
+        batchNumber = view.findViewById(R.id.batchNumber);
+        databaseAccess = DatabaseAccess.getInstance(getActivity());
+        databaseAccess.open();
+        batchName = databaseAccess.batchName();
+        arrayAdapter = new ArrayAdapter<>(view.getContext(),R.layout.list_item,batchName);
+        batchNumber.setAdapter(arrayAdapter);
+        databaseAccess.close();
+
+
+        /*arrayAdapter = new ArrayAdapter<>(view.getContext(),R.layout.list_item,batch);
+        batchNumber.setAdapter(arrayAdapter);*/
+
+
 
         universityId = view.findViewById(R.id.universityId);
         firstName = view.findViewById(R.id.firstname);
@@ -161,7 +178,7 @@ public class RegisterFragment extends Fragment {
 
         btnRegister = view.findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(view1 -> {
-            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity());
+            databaseAccess = DatabaseAccess.getInstance(getActivity());
             databaseAccess.open();
             if(password.getEditText().getText().toString().equals(confirmPassword.getEditText().getText().toString()))
             {
@@ -213,8 +230,8 @@ public class RegisterFragment extends Fragment {
                         {
                             throw new RuntimeException(e);
                         }
-                        loginFragment = new LoginFragment();
-                        replaceFragment(loginFragment);
+                        registerFragment = new RegisterFragment();
+                        replaceFragment(registerFragment);
 
                     }
                     else
@@ -239,7 +256,7 @@ public class RegisterFragment extends Fragment {
     public void replaceFragment(Fragment fragment)
     {
         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.homeFrameLayout,fragment);
+        fragmentTransaction.replace(R.id.frame_layout,fragment);
         fragmentTransaction.commit();
     }
     public boolean isValidPassword(TextInputLayout textField) {

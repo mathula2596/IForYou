@@ -4,11 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -25,6 +30,15 @@ public class AdminDashboard extends AppCompatActivity {
     private static final String KEY_NAME = "username";
     private static final String KEY_ROLE = "userType";
     String loginName, loginRole = null;
+    private View navHeader;
+    public TextView username;
+    private FragmentTransaction fragmentTransaction;
+    private RegisterFragment registerFragment;
+    private TimetableFragment timetableFragment;
+    private ViewTimetableFragment viewTimetableFragment;
+
+
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +57,12 @@ public class AdminDashboard extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
 
+        navHeader = navigationView.findViewById(R.layout.nav_header);
+
         appbar.setNavigationOnClickListener(view -> {
             drawerLayout.openDrawer(GravityCompat.START);
+            username = navigationView.findViewById(R.id.username);
+            username.setText(loginName);
         });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -62,9 +80,17 @@ public class AdminDashboard extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(),MainActivity.class));
                             finish();
                         break;
-                    case R.id.settings:
-                        Toast.makeText(getApplicationContext(), "Settings is Clicked",
-                                Toast.LENGTH_SHORT).show();
+                    case R.id.nav_register:
+                        registerFragment = new RegisterFragment();
+                        replaceFragment(registerFragment);
+                        break;
+                    case R.id.nav_timetable:
+                        timetableFragment = new TimetableFragment();
+                        replaceFragment(timetableFragment);
+                        break;
+                    case R.id.nav_view_timetable:
+                        viewTimetableFragment = new ViewTimetableFragment();
+                        replaceFragment(viewTimetableFragment);
                         break;
                     default:
                         return true;
@@ -73,5 +99,11 @@ public class AdminDashboard extends AppCompatActivity {
                 return true;
             }
         });
+    }
+    public void replaceFragment(Fragment fragment)
+    {
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout,fragment);
+        fragmentTransaction.commit();
     }
 }

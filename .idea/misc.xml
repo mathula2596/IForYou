@@ -10,11 +10,15 @@
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_lecturer_dashboard.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_main.xml" value="0.18" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/activity_student_dashboard.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_edit_timetable.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_forgot_password.xml" value="0.18" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_register.xml" value="0.33" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_timetable.xml" value="0.33" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/fragment_view_timetable.xml" value="0.33" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/list_item.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/nav_header.xml" value="0.25" />
+        <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/layout/view_list_item.xml" value="0.25" />
         <entry key="..\:/Users/mathu/AndroidStudioProjects/IForYou/app/src/main/res/menu/admin_menu_item.xml" value="0.33" />
       </map>
     </option>
