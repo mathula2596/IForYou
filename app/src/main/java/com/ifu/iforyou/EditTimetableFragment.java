@@ -77,7 +77,20 @@ public class EditTimetableFragment extends Fragment {
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
 
-                            txtDate.getEditText().setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            int newMonth = monthOfYear + 1;
+                            String twoDigitMonth = String.valueOf(newMonth);
+                            String twoDigitDate = String.valueOf(dayOfMonth);
+                            if(newMonth<10)
+                            {
+                                twoDigitMonth = "0"+newMonth;
+                            }
+
+                            if(dayOfMonth<10)
+                            {
+                                twoDigitDate = "0"+dayOfMonth;
+                            }
+
+                            txtDate.getEditText().setText(twoDigitDate + "-" + (twoDigitMonth) + "-" + year);
 
                         }
                     }, year, month, dayDate);
@@ -95,7 +108,18 @@ public class EditTimetableFragment extends Fragment {
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
 
-                            txtStartTime.getEditText().setText(hourOfDay + ":" + minute);
+                            String newHoursOfDay = String.valueOf(hourOfDay);
+                            if(hourOfDay<10)
+                            {
+                                newHoursOfDay = "0"+hourOfDay;
+                            }
+
+                            String newMinute = String.valueOf(minute);
+                            if(minute<10)
+                            {
+                                newMinute = "0"+minute;
+                            }
+                            txtStartTime.getEditText().setText(newHoursOfDay + ":" + newMinute);
                         }
                     }, hour, minute, false);
             timePickerDialog.show();
@@ -112,7 +136,18 @@ public class EditTimetableFragment extends Fragment {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
-                            txtEndTime.getEditText().setText(hourOfDay + ":" + minute);
+                            String newHoursOfDay = String.valueOf(hourOfDay);
+                            if(hourOfDay<10)
+                            {
+                                newHoursOfDay = "0"+hourOfDay;
+                            }
+
+                            String newMinute = String.valueOf(minute);
+                            if(minute<10)
+                            {
+                                newMinute = "0"+minute;
+                            }
+                            txtEndTime.getEditText().setText(newHoursOfDay + ":" + newMinute);
                         }
                     }, hour, minute, false);
             timePickerDialog.show();

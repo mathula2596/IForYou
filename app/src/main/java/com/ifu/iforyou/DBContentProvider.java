@@ -47,6 +47,7 @@ public class DBContentProvider extends ContentProvider {
         uriMatcher.addURI(PROVIDER_NAME, "users/*", uriCode);
         uriMatcher.addURI(PROVIDER_NAME, "login", uriCode);
         uriMatcher.addURI(PROVIDER_NAME, "forgotpassword", uriCode);
+        uriMatcher.addURI(PROVIDER_NAME, "viewtimetable", uriCode);
     }
     private Cursor cursor = null;
     Context context;
@@ -105,6 +106,15 @@ public class DBContentProvider extends ContentProvider {
 
             return cursor;
         }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/viewtimetable")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getTimetableForStudents(selectionArgs[0]);
+
+            return cursor;
+        }
+
        return cursor;
     }
 

@@ -642,6 +642,32 @@ public class DatabaseAccess extends AppCompatActivity {
         }
     }
 
+    public Cursor getTimetableForStudents(String studentId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+        c = db.rawQuery("select timetable.id, timetable.date, timetable.startTime, timetable" +
+                ".endTime, timetable" +
+                ".moduleId, timetable.lecturerId, timetable.classType, timetable.location, users" +
+                ".universityId, users.firstname, users.lastname, module.moduleName" +
+                " " +
+                "from timetable " +
+                "inner join studentTimetable on timetable.id = studentTimetable.timetableId inner" +
+                " join users on users.id = timetable.lecturerId inner join module on module.id = " +
+                "timetable.moduleId" +
+                " where " +
+                "studentTimetable.studentId" +
+                " = ? and " +
+                "timetable.status" +
+                " =?", new String[]{String.valueOf(userId),
+                status});
+        Log.d("TAG", "getTimetableForStudents: "+c.getCount());
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+            return c;
+    }
+
     public Cursor findByEmail(String emailId){
         c = null;
         c = db.rawQuery("select * from users where email = ? and status =?", new String[]{emailId,
