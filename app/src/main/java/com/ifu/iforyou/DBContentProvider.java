@@ -114,7 +114,84 @@ public class DBContentProvider extends ContentProvider {
 
             return cursor;
         }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/notification")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getAlertByStudentId(selectionArgs[0]);
 
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/notificationreturn")))
+        {
+            databaseAccess.open();
+            cursor = null;
+            if(selectionArgs.length > 0)
+            {
+                cursor =
+                        databaseAccess.updateAlertByStudentId(selectionArgs[0]);
+            }
+
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/attendance")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getAttendanceByStudentId(selectionArgs[0],selectionArgs[1]);
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/module")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getModuleByStudentId(selectionArgs[0]);
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/attendancepertageoverall")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getOverallAttendanceByStudentId(selectionArgs[0],
+                            selectionArgs[1]);
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/attendancepertagelastweek")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getLastWeekAttendanceByStudentId(selectionArgs[0],selectionArgs[1]);
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/attendancepertagethisweek")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getThisWeekAttendanceByStudentId(selectionArgs[0],selectionArgs[1]);
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/attendancenotification")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getLastWeekAttendanceByStudentIdForNotification(selectionArgs[0]);
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/attendancenotificationupdate")))
+        {
+            databaseAccess.open();
+            cursor =
+                    databaseAccess.getLastWeekAttendanceByStudentIdForNotificationUpdate(selectionArgs[0]);
+
+            return cursor;
+        }
        return cursor;
     }
 

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.security.GeneralSecurityException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class DatabaseAccess extends AppCompatActivity {
     private ContentValues contentValues2;
     private String nextDate = null;
     private SimpleDateFormat simpleDateFormat;
+    private Calendar calendar;
+
 
     private DatabaseAccess(Context context)
     {
@@ -409,7 +412,7 @@ public class DatabaseAccess extends AppCompatActivity {
                     "New updated on timetable on the followings: " + changedValues);
             contentValues2.put("fieldChanged",changedValues);
             contentValues2.put("dateAlert",date);
-            contentValues2.put("timeAlert","6:0");
+            contentValues2.put("timeAlert","06:00");
             contentValues2.put("type","Timetable");
             contentValues2.put("status",status);
             long result2 = db.insert("alert",null, contentValues2);
@@ -666,6 +669,310 @@ public class DatabaseAccess extends AppCompatActivity {
             return c;
         }
             return c;
+    }
+
+    public Cursor getAlertByStudentId(String studentId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+
+        c = db.rawQuery("select timetable.id, alert.id as alertID, timetable.date, alert.message," +
+                " alert.dateAlert as dateAlert, " +
+                "alert.timeAlert as timeAlert, alert.type from timetable " +
+                "inner join alert on timetable.id = alert.timetableId inner join " +
+                "studentTimetable on studentTimetable.timetableId = timetable.id where " +
+                "alert.status" +
+                " = ? and studentTimetable.studentId = ?", new String[]{status,
+                String.valueOf(userId),
+                });
+        Log.d("TAG", "getTimetableForStudents: "+c.getCount());
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+        return c;
+    }
+
+    public Cursor getAttendanceByStudentId(String studentId, String module){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+        int moduleId = findModuleIdByName(module);
+
+        c = db.rawQuery("select timetable.date as date, attendance.attendance from attendance " +
+                "inner join timetable on timetable.id = " +
+                "attendance.studentTimetableId" +
+                " where attendance.studentId= ? and timetable.moduleId = ? and attendance.status " +
+                "=?", new String[]{String.valueOf(userId),String.valueOf(moduleId),status});
+
+        //Log.d("TAG", "getAttendanceByStudentId: "+c.getCount());
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+        return c;
+    }
+
+    public Cursor getModuleByStudentId(String studentId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+
+        c = db.rawQuery("select * from studentModule inner join module on module.id = " +
+                "studentModule.moduleId" +
+                " where studentModule.studentId= ? and " +
+                "studentModule.status " +
+                "=?", new String[]{String.valueOf(userId),status});
+
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+        return c;
+    }
+    public Cursor getOverallAttendanceByStudentId(String studentId, String moduleId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+
+        if(moduleId.equals("0"))
+        {
+            c = db.rawQuery("select * from attendance where studentId= ? and " +
+                    "status " +
+                    "=?", new String[]{String.valueOf(userId),status});
+        }
+        else
+        {
+            int moduleIdSearch = findModuleIdByName(moduleId);
+            c = db.rawQuery("select * from attendance inner join timetable on timetable.id = " +
+                    "attendance.studentTimetableId" +
+                    " where attendance.studentId= ? and timetable.moduleId = ? and attendance" +
+                    ".status " +
+                    "=?", new String[]{String.valueOf(userId),String.valueOf(moduleIdSearch),status});
+        }
+
+
+        //Log.d("TAG", "getOverallAttendanceByStudentId: "+c);
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+        return c;
+    }
+    public String[] getCurrentWeek() {
+        this.calendar = Calendar.getInstance();
+        this.calendar.setFirstDayOfWeek(Calendar.MONDAY);
+        this.calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        return getNextWeek();
+    }
+    public String[] getNextWeek() {
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        String[] days = new String[7];
+        for (int i = 0; i < 7; i++) {
+            days[i] = format.format(this.calendar.getTime());
+            this.calendar.add(Calendar.DATE, 1);
+        }
+        return days;
+    }
+    public String[] getPreviousWeek() {
+        this.calendar.add(Calendar.DATE, -14);
+        return getNextWeek();
+    }
+    public Cursor getLastWeekAttendanceByStudentId(String studentId, String moduleId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+
+
+
+        Log.d("tag" ,"Current : " + Arrays.toString(getCurrentWeek()));
+        String [] getPreviousWeekArray = getPreviousWeek();
+
+        if(moduleId.equals("0"))
+        {
+            c = db.rawQuery("select * from attendance inner join timetable on attendance" +
+                    ".studentTimetableId = timetable.id where " +
+                    "attendance.studentId=" +
+                    " ? and timetable.date >= ? and timetable.date <= ? and "  +
+                    "attendance.status " +
+                    "=?", new String[]{String.valueOf(userId),getPreviousWeekArray[0],
+                    getPreviousWeekArray[6],status});
+        }
+        else
+        {
+            int moduleIdSearch = findModuleIdByName(moduleId);
+            c = db.rawQuery("select * from attendance inner join timetable on attendance" +
+                    ".studentTimetableId = timetable.id where " +
+                    "attendance.studentId=" +
+                    " ? and timetable.moduleId= ? and timetable.date >= ? and timetable.date <= " +
+                    "? and "  +
+                    "attendance.status " +
+                    "=?", new String[]{String.valueOf(userId),String.valueOf(moduleIdSearch),
+                    getPreviousWeekArray[0],
+                    getPreviousWeekArray[6],status});
+        }
+
+        Log.d("TAG",
+                "getLastWeekAttendanceByStudentId: "+c.getCount());
+
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+        return c;
+    }
+
+   public Cursor getThisWeekAttendanceByStudentId(String studentId, String moduleId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+
+        String [] getThisWeekArray = getCurrentWeek();
+
+
+       if(moduleId.equals("0"))
+       {
+
+           c = db.rawQuery("select * from attendance inner join timetable on attendance" +
+                   ".studentTimetableId = timetable.id where " +
+                   "attendance.studentId=" +
+                   " ? and timetable.date >= ? and timetable.date <= ? and "  +
+                   "attendance.status " +
+                   "=?", new String[]{String.valueOf(userId),getThisWeekArray[0],
+                   getThisWeekArray[6],status});
+       }
+       else
+       {
+           int moduleIdSearch = findModuleIdByName(moduleId);
+
+           c = db.rawQuery("select * from attendance inner join timetable on attendance" +
+                   ".studentTimetableId = timetable.id where " +
+                   "attendance.studentId=" +
+                   " ? and timetable.moduleId = ? and timetable.date >= ? and timetable.date <= ?" +
+                   " and "  +
+                   "attendance.status " +
+                   "=?", new String[]{String.valueOf(userId),String.valueOf(moduleIdSearch),
+                   getThisWeekArray[0],
+                   getThisWeekArray[6],status});
+       }
+
+
+
+
+        if(c.getCount()>0)
+        {
+            return c;
+        }
+        return c;
+    }
+
+    public Cursor getLastWeekAttendanceByStudentIdForNotification(String studentId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+
+
+        Log.d("tag" ,"Current : " + Arrays.toString(getCurrentWeek()));
+        String [] getPreviousWeekArray = getPreviousWeek();
+
+        c = db.rawQuery("select * from attendance inner join timetable on attendance" +
+                ".studentTimetableId = timetable.id where " +
+                "attendance.studentId=" +
+                " ? and timetable.date >= ? and timetable.date <= ? and "  +
+                "attendance.status " +
+                "=?", new String[]{String.valueOf(userId),getPreviousWeekArray[0],
+                getPreviousWeekArray[6],status});
+        int noOfClassesLastWeek = 0;
+        float attendancePercentageLastWeek = 0;
+        int attendedClassLastWeek = 0;
+
+
+        if(c.getCount()>0)
+        {
+            while (c.moveToNext())
+            {
+                if(c.getString(c.getColumnIndex("attendance")).equals("1"))
+                {
+                    attendedClassLastWeek = attendedClassLastWeek + 1;
+                }
+            }
+
+            attendancePercentageLastWeek =
+                    (Float.parseFloat(String.valueOf(attendedClassLastWeek))/Float.parseFloat(String.valueOf(noOfClassesLastWeek)) * 100);
+        }
+
+        String message = "Consider your attendance";
+        if(attendancePercentageLastWeek == 100)
+        {
+            message = "Excellent on your attendance";
+        }
+        else if(attendancePercentageLastWeek >= 75)
+        {
+            message = "Great keep going";
+        }
+        else if(attendancePercentageLastWeek >= 50)
+        {
+            message = "Mind your attendance";
+        }
+        else if(attendancePercentageLastWeek < 50)
+        {
+            message = "You must attend the class";
+        }
+
+        Cursor cursor = db.rawQuery("select * from alertAttendance where " +
+                "studentId=" +
+                " ?", new String[]{String.valueOf(userId)});
+
+        //Log.d("TAG", "getLastWeekAttendanceByStudentIdForNotification: "+cursor);
+        if(cursor != null && cursor.getCount() >0)
+        {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("message",message);
+            contentValues.put("status",status);
+
+            long result = db.update("alertAttendance",contentValues,"studentId = ?",
+                    new String[]{String.valueOf(userId)});
+        }
+        else
+        {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("studentId",userId);
+            contentValues.put("message",message);
+            contentValues.put("dayAlert","5");
+            contentValues.put("timeAlert","13:00");
+            contentValues.put("status",status);
+
+            long result = db.insert("alertAttendance",null,contentValues);
+        }
+        c = db.rawQuery("select * from alertAttendance where " +
+                "studentId=" +
+                " ? and status " +
+                "=?", new String[]{String.valueOf(userId),status});
+        return c;
+    }
+    public Cursor getLastWeekAttendanceByStudentIdForNotificationUpdate(String studentId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("studentId",userId);
+        contentValues.put("status","Completed");
+
+        Log.d("TAG", "getLastWeekAttendanceByStudentIdForNotificationUpdate: "+userId);
+        long result = db.update("alertAttendance",contentValues,"studentId=?",
+                new String[]{String.valueOf(userId)});
+        return c;
+    }
+
+    public Cursor updateAlertByStudentId(String alertId){
+        c = null;
+
+
+       // Log.d("TAGA", "updateAlertByStudentId: " + alertId);
+        if(!alertId.isEmpty())
+        {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("status", "Completed");
+            int r = db.update("alert", contentValues, " id =?",
+                    new String[]{alertId});
+
+        }
+
+
+
+        return c;
     }
 
     public Cursor findByEmail(String emailId){

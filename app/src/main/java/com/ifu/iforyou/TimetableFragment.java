@@ -95,6 +95,9 @@ public class TimetableFragment extends Fragment {
             }
         });
 
+
+
+
         btnDate = view.findViewById(R.id.btnDate);
         btnStartTime = view.findViewById(R.id.btnStartTime);
         btnEndTime = view.findViewById(R.id.btnEndTime);
