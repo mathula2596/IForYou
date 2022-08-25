@@ -42,4 +42,6 @@
     <string name="date">Date</string>
     <string name="termStartDate">Term Start Date</string>
     <string name="termEndDate">Term End Date</string>
+    <string name="Reset">Reset</string>
+    <string name="oldpassword">Current Password</string>
 </resources>

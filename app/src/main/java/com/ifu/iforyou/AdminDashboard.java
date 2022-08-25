@@ -36,6 +36,7 @@ public class AdminDashboard extends AppCompatActivity {
     private RegisterFragment registerFragment;
     private TimetableFragment timetableFragment;
     private ViewTimetableFragment viewTimetableFragment;
+    private ResetPasswordFragment resetPasswordFragment;
 
 
     @SuppressLint("ResourceType")
@@ -65,6 +66,9 @@ public class AdminDashboard extends AppCompatActivity {
             username.setText(loginName);
         });
 
+        viewTimetableFragment = new ViewTimetableFragment();
+        replaceFragment(viewTimetableFragment);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -92,6 +96,14 @@ public class AdminDashboard extends AppCompatActivity {
                         viewTimetableFragment = new ViewTimetableFragment();
                         replaceFragment(viewTimetableFragment);
                         break;
+                    case R.id.nav_home:
+                        viewTimetableFragment = new ViewTimetableFragment();
+                        replaceFragment(viewTimetableFragment);
+                        break;
+                    case R.id.nav_change_password:
+                        resetPasswordFragment = new ResetPasswordFragment();
+                        replaceFragment(resetPasswordFragment);
+                        break;
                     default:
                         return true;
 
@@ -103,7 +115,7 @@ public class AdminDashboard extends AppCompatActivity {
     public void replaceFragment(Fragment fragment)
     {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout,fragment);
+        fragmentTransaction.replace(R.id.frame_layout,fragment).addToBackStack("back");
         fragmentTransaction.commit();
     }
 }

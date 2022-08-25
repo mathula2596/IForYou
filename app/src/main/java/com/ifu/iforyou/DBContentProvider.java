@@ -192,6 +192,55 @@ public class DBContentProvider extends ContentProvider {
 
             return cursor;
         }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/resetpassword")))
+        {
+            Boolean pass = false;
+            databaseAccess.open();
+            try {
+                pass =
+                        databaseAccess.resetPassword(selectionArgs[0],selectionArgs[1],
+                                selectionArgs[2]);
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+            Log.d("TAG", "query: "+pass);
+            if(pass)
+            {
+                cursor = databaseAccess.getUserById(selectionArgs[0]);
+            }
+            else
+            {
+                cursor = null;
+            }
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/profile")))
+        {
+
+                cursor = databaseAccess.getProfile(selectionArgs[0]);
+
+
+            return cursor;
+        }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/profileupdate")))
+        {
+
+            boolean res = false;
+            res = databaseAccess.updateProfile(selectionArgs[0],selectionArgs[1],selectionArgs[2]
+                    ,selectionArgs[3]);
+            if(res)
+            {
+                cursor = databaseAccess.getUserById(selectionArgs[0]);
+            }
+            else
+            {
+                cursor = null;
+            }
+
+
+            return cursor;
+        }
        return cursor;
     }
 

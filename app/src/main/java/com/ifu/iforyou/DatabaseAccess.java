@@ -341,7 +341,17 @@ public class DatabaseAccess extends AppCompatActivity {
         }
         return false;
     }
+    public Cursor getProfile(String universityId) {
 
+        c = null;
+        c = db.rawQuery("select * from users inner join batch on batch.id = users.batchNo inner " +
+                "join course on" +
+                " course.id = users.courseId " +
+                "where users.universityId = ? and users.status =" +
+                " ?", new String[]{universityId,status});
+        Log.d("TAG", "getProfile: "+c.getCount());
+        return c;
+    }
     public boolean register(String universityId, String firstname, String lastname, String email,
                          String password, String userRole, String courseId, String degreeLevel,
                          String batchNo, String status) throws GeneralSecurityException {
@@ -373,7 +383,24 @@ public class DatabaseAccess extends AppCompatActivity {
             return true;
         }
     }
+    public boolean updateProfile(String studentId, String firstname, String lastname, String email) {
 
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("firstName",firstname);
+        contentValues.put("lastName",lastname);
+        contentValues.put("email",email);
+
+        long result = db.update("users", contentValues,"universityId=?", new String[]{studentId});
+        if(result==-1)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
     public boolean updateTimetable(String id, String lecturerId,
                                    String date,
                                    String startTime, String endTime, String location, String type)
@@ -932,7 +959,7 @@ public class DatabaseAccess extends AppCompatActivity {
             contentValues.put("studentId",userId);
             contentValues.put("message",message);
             contentValues.put("dayAlert","5");
-            contentValues.put("timeAlert","13:00");
+            contentValues.put("timeAlert","16:30");
             contentValues.put("status",status);
 
             long result = db.insert("alertAttendance",null,contentValues);
@@ -1003,6 +1030,55 @@ public class DatabaseAccess extends AppCompatActivity {
         {
             return false;
         }
+    }
+
+    public Cursor getUserById(String userId){
+        c = null;
+        c = db.rawQuery("select * from users where universityId = ? and status =?",
+                new String[]{userId,
+                status});
+
+        return c;
+    }
+
+    public Boolean resetPassword(String studentId, String password, String currentPassword) throws GeneralSecurityException {
+        c = null;
+        c = db.rawQuery("select * from users where universityId = ? and status =?",
+                new String[]{studentId,
+                status});
+        String oldPassword, dbPassword = null;
+        Log.d("TAG", "resetPassword: "+c.getCount());
+        if(c.getCount()>0)
+        {
+
+            while (c.moveToNext()){
+
+                dbPassword = c.getString(c.getColumnIndex("password"));
+                oldPassword = AESCrypt.encrypt(studentId,currentPassword);
+
+                Log.d("TAG", "resetPassword: "+oldPassword);
+                Log.d("TAG", "resetPassword: "+dbPassword);
+
+
+                if(dbPassword.equals(oldPassword))
+                {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("password",AESCrypt.encrypt(studentId,password));
+                    db.update("users",contentValues," universityId =?",new String[]{studentId});
+                    return  true;
+                }
+                else
+                {
+                    return  false;
+                }
+            }
+
+        }
+        else
+        {
+            return false;
+        }
+        return false;
     }
 
     public boolean sendPassword(String email)
