@@ -241,6 +241,14 @@ public class DBContentProvider extends ContentProvider {
 
             return cursor;
         }
+        else if(uri.equals(Uri.parse("content://" + PROVIDER_NAME + "/timetablenotificationreminder")))
+        {
+
+            cursor = databaseAccess.getTimetableForReminder(selectionArgs[0]);
+
+
+            return cursor;
+        }
        return cursor;
     }
 

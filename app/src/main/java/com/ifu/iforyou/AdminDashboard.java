@@ -6,6 +6,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -18,6 +21,8 @@ import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.concurrent.TimeUnit;
 
 public class AdminDashboard extends AppCompatActivity {
 
@@ -38,6 +43,7 @@ public class AdminDashboard extends AppCompatActivity {
     private ViewTimetableFragment viewTimetableFragment;
     private ResetPasswordFragment resetPasswordFragment;
 
+    private WorkRequest notificationWorkRequest;
 
     @SuppressLint("ResourceType")
     @Override
@@ -65,6 +71,17 @@ public class AdminDashboard extends AppCompatActivity {
             username = navigationView.findViewById(R.id.username);
             username.setText(loginName);
         });
+
+        notificationWorkRequest = new PeriodicWorkRequest.Builder(AttendaceWorkManager.class,
+                10000,
+                TimeUnit.MILLISECONDS)
+                .build();
+//        notificationWorkRequest = new OneTimeWorkRequest.Builder(NotificationWorker.class)
+//         .build();
+
+        WorkManager
+                .getInstance(this)
+                .enqueue(notificationWorkRequest);
 
         viewTimetableFragment = new ViewTimetableFragment();
         replaceFragment(viewTimetableFragment);

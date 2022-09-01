@@ -280,6 +280,7 @@ public class DatabaseAccess extends AppCompatActivity {
 
     public int findUserIdByUniversityId(String universityId){
         int userId = 0;
+        Log.d("TAG1", "findUserIdByUniversityId: "+universityId);
         c = db.rawQuery("select * from users where universityId = ? and status" +
                         " = ?",
                 new String[]{universityId, status});
@@ -355,9 +356,8 @@ public class DatabaseAccess extends AppCompatActivity {
     public boolean register(String universityId, String firstname, String lastname, String email,
                          String password, String userRole, String courseId, String degreeLevel,
                          String batchNo, String status) throws GeneralSecurityException {
-
-        int course = findCourseIdByName(degreeLevel,courseId);
-        int batch = findBatchIdByName(batchNo);
+        int course = findCourseIdByName(degreeLevel,courseId); // generate course id
+        int batch = findBatchIdByName(batchNo); // generate batch id
         encryptedPassword = AESCrypt.encrypt(universityId,password);
         ContentValues contentValues = new ContentValues();
         contentValues.put("universityId",universityId);
@@ -370,9 +370,6 @@ public class DatabaseAccess extends AppCompatActivity {
         contentValues.put("degreeLevel",degreeLevel);
         contentValues.put("batchNo",batch);
         contentValues.put("status",status);
-
-
-
         long result = db.insert("users", null,contentValues);
         if(result==-1)
         {
@@ -556,6 +553,7 @@ public class DatabaseAccess extends AppCompatActivity {
                         int module = findModuleIdByName(moduleId);
                         int batch = findBatchIdByName(batchId);
                         int lecturer = findUserIdByUniversityId(lecturerId);
+
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put("moduleId",module);
@@ -844,6 +842,25 @@ public class DatabaseAccess extends AppCompatActivity {
         return c;
     }
 
+    public void calculateLastWeekAttendance(){
+        c = null;
+        Log.d("tag" ,"Current : " + Arrays.toString(getCurrentWeek()));
+        String [] getPreviousWeekArray = getPreviousWeek();
+
+        Cursor cursor = db.rawQuery("select * from users where userRole =? and status =?", new String[]{
+                "Student",status});
+        if(cursor.getCount()>0)
+        {
+            cursor.moveToFirst();
+            while (cursor.moveToNext()){
+                getLastWeekAttendanceByStudentIdForNotification(cursor.getString(cursor.getColumnIndex(
+                        "universityId")));
+            }
+        }
+
+
+    }
+
    public Cursor getThisWeekAttendanceByStudentId(String studentId, String moduleId){
         c = null;
         int userId = findUserIdByUniversityId(studentId);
@@ -944,7 +961,7 @@ public class DatabaseAccess extends AppCompatActivity {
                 " ?", new String[]{String.valueOf(userId)});
 
         //Log.d("TAG", "getLastWeekAttendanceByStudentIdForNotification: "+cursor);
-        if(cursor != null && cursor.getCount() >0)
+       if(cursor != null && cursor.getCount() > 0)
         {
             ContentValues contentValues = new ContentValues();
             contentValues.put("message",message);
@@ -959,7 +976,7 @@ public class DatabaseAccess extends AppCompatActivity {
             contentValues.put("studentId",userId);
             contentValues.put("message",message);
             contentValues.put("dayAlert","5");
-            contentValues.put("timeAlert","16:30");
+            contentValues.put("timeAlert","08:00");
             contentValues.put("status",status);
 
             long result = db.insert("alertAttendance",null,contentValues);
@@ -981,6 +998,36 @@ public class DatabaseAccess extends AppCompatActivity {
         long result = db.update("alertAttendance",contentValues,"studentId=?",
                 new String[]{String.valueOf(userId)});
         return c;
+    }
+
+    public Cursor getTimetableForReminder(String studentId){
+        c = null;
+        int userId = findUserIdByUniversityId(studentId);
+        ArrayList<String> timetableIds = new ArrayList<>();
+        c = db.rawQuery("select * from studentTimetable where " +
+                "studentId=" +
+                " ? and status " +
+                "=?", new String[]{String.valueOf(userId),status});
+        if(c.getCount()>0){
+            while (c.moveToNext()){
+                timetableIds.add(c.getString(c.getColumnIndex("timetableId")));
+            }
+        }
+
+
+        ArrayList<String> timetables = new ArrayList<>();
+        String[] timetableIdArray = timetableIds.toArray(new String[timetableIds.size()]);
+
+
+        Cursor cursor = db.rawQuery("select * from timetable where " +
+                "id IN (" +Arrays.toString(timetableIdArray).substring(1,
+                Arrays.toString(timetableIdArray).length()-1)+
+                ") and status " +
+                "=?", new String[]{status});
+//        Log.d("TAG", "getTimetableForReminder: "+Arrays.toString(timetableIdArray).substring(1,
+//                Arrays.toString(timetableIdArray).length()-1));
+//        Log.d("TAG", "getTimetableForReminder: "+cursor.getCount());
+        return cursor;
     }
 
     public Cursor updateAlertByStudentId(String alertId){
@@ -1088,7 +1135,6 @@ public class DatabaseAccess extends AppCompatActivity {
         props.put("mail.smtp.starttls.enable","true");
         props.put("mail.smtp.host","smtp.gmail.com");
         props.put("mail.smtp.port","587");
-
         Session session = Session.getInstance(props, new javax.mail.Authenticator(){
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -1102,28 +1148,19 @@ public class DatabaseAccess extends AppCompatActivity {
             message.setSubject("Reset Password");
             random = new Random();
             randomPassword = String.format("%04d", random.nextInt(10000));
-            boolean result2 =
-                    forgotPasswordUpdatePassword(email,randomPassword);
+            boolean result2 = forgotPasswordUpdatePassword(email,randomPassword);
             if(result2){
                 message.setText("New Password - " + randomPassword);
-                StrictMode.ThreadPolicy policy =
-                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 Transport.send(message);
                 return true;
-
             }
             else
-            {
-                return false;
-            }
-
-
+            {return false;}
         }
         catch (MessagingException | GeneralSecurityException e)
-        {
-            throw new RuntimeException(e);
-        }
+        {throw new RuntimeException(e);}
     }
 
 
